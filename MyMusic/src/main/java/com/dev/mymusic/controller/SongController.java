@@ -1,9 +1,11 @@
 package com.dev.mymusic.controller;
 
 import com.dev.mymusic.dto.request.SongCreateRequest;
+import com.dev.mymusic.dto.request.SongUpdateRequest;
 import com.dev.mymusic.dto.response.SongResponse;
 import com.dev.mymusic.service.SongService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,4 +37,39 @@ public class SongController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @GetMapping("/list")
+    public ResponseEntity<Page<SongResponse>> getListSong(@RequestParam(defaultValue = "0") int page,
+                                                          @RequestParam(defaultValue = "10") int size,
+                                                          @RequestParam String search) {
+        try {
+            return ResponseEntity.ok(songService.getListSong(page, size, search));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Page<SongResponse>> filterByGenre(@RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size,
+                                                            @RequestParam String search) {
+        try {
+            return ResponseEntity.ok(songService.filterByGenre(page, size, search));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<SongResponse>updateSong(@PathVariable UUID id, @RequestParam SongUpdateRequest songUpdateRequest){
+        try {
+            SongResponse response = songService.updateSong(id, songUpdateRequest);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }

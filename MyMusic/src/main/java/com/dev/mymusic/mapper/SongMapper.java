@@ -13,7 +13,7 @@ public interface SongMapper {
     SongResponse songToSongResponse(Song song);
 
 
-    @Mapping(target = "id", ignore = true)
+//    @Mapping(target = "id", ignore = true)
     @Mapping(target = "genre", ignore = true)
     @Mapping(target = "artist", ignore = true)
     @Mapping(target = "duration", ignore = true)

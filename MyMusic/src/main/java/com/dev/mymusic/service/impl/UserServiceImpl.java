@@ -66,7 +66,6 @@ public class UserServiceImpl implements UserService {
             if (search != null && !search.isEmpty()) {
                 users = userRepository.findByNameContainingIgnoreCase(search, pageable);
             }
-            ;
             return users.map(userMapper::userToUserResponse);
         } catch (Exception e) {
             e.printStackTrace();
