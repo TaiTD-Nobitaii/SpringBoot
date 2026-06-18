@@ -63,7 +63,7 @@ public class SongController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<SongResponse>updateSong(@PathVariable UUID id, @RequestBody SongUpdateRequest songUpdateRequest){
+    public ResponseEntity<SongResponse> updateSong(@PathVariable UUID id, @RequestBody SongUpdateRequest songUpdateRequest) {
         try {
             SongResponse response = songService.updateSong(id, songUpdateRequest);
             return ResponseEntity.ok(response);
@@ -72,5 +72,13 @@ public class SongController {
         }
     }
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSong(@PathVariable UUID id) {
+        try {
+            songService.deleteSong(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

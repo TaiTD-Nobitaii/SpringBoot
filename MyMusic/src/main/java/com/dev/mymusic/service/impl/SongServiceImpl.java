@@ -90,4 +90,13 @@ public class SongServiceImpl implements SongService {
         songRepository.save(song);
         return songMapper.songToSongResponse(song);
     }
+
+    @Override
+    public Void deleteSong(UUID id) {
+        Song song = songRepository.findById(id).orElseThrow();
+        songRepository.delete(song);
+        song.setStatus(false);
+        songRepository.save(song);
+        return null;
+    }
 }

@@ -18,4 +18,6 @@ public interface SongService {
     Page<SongResponse> filterByGenre(int page, int size, String search);
 
     SongResponse updateSong(UUID id, SongUpdateRequest songUpdateRequest);
+
+    Void deleteSong(UUID id);
 }
