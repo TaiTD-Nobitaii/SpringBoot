@@ -15,7 +15,7 @@ import java.util.UUID;
 public class SongUpdateRequest {
     private String title;
     private String singer;
-    private Genre genreId;
+    private UUID genreId;
     private String path;
     private Integer duration;
 }

@@ -80,10 +80,11 @@ public class SongServiceImpl implements SongService {
     @Override
     public SongResponse updateSong(UUID id, SongUpdateRequest songUpdateRequest) {
         Song song = songRepository.findById(id).orElseThrow();
+        Genre genre = genreRepository.findById(songUpdateRequest.getGenreId()).orElseThrow();
         song.setTitle(songUpdateRequest.getTitle());
         song.setSinger(songUpdateRequest.getSinger());
+        song.setGenre(genre);
         song.setSinger(songUpdateRequest.getSinger());
-        song.setGenre(songUpdateRequest.getGenreId());
         song.setPath(songUpdateRequest.getPath());
         song.setDuration(songUpdateRequest.getDuration());
         songRepository.save(song);
