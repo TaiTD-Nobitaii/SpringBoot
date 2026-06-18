@@ -1,0 +1,41 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:11433;databaseName=MyMusic;encrypt=true;trustServerCertificate=true;
+    username: sa
+    password: Tai171003@
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        globally_quoted_identifiers: true
+        dialect: org.hibernate.dialect.SQLServerDialect
+  web:
+    error:
+      include-message: always
+
+# Cấu hình JWT cho ứng dụng
+app:
+  jwt:
+    # Key bí mật độ dài tối thiểu 256-bit (dùng mã hóa HS256)
+    secret: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    # Thời gian hết hạn của token: 1 ngày (86,400,000 milliseconds)
+    expiration-ms: 86400000
+
+# Cấu hình tài liệu API Swagger/OpenAPI
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
