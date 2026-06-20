@@ -5,9 +5,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
+
 @Repository
 public interface SongRepository extends JpaRepository<Song, UUID> {
 
@@ -20,5 +23,33 @@ public interface SongRepository extends JpaRepository<Song, UUID> {
             WHERE LOWER(g.name) LIKE LOWER(CONCAT('%', :search, '%'))
             """)
     Page<Song> filterGenreBySong(String search, Pageable pageable);
+
+    @Query("""
+            select g.name as genreName,
+                   s.id,
+                   s.title,
+                   s.lyrics
+            from Song s
+            join Genre g
+                  on s.idGenre = g.id
+            where g.id = :genre
+                  and (s.title like :search
+                  or s.lyrics like :search)
+            order by s.title
+            offset :offset rows
+            fetch next :pageSize rows only
+            """)
+    List<Song> findByGenreAndSearch(@Param("genre") String genre, @Param("search") String search, @Param("offset") Integer offset, @Param("pageSize") Integer pageSize);
+
+    @Query("""
+            select count(s.id) 
+            from Song s 
+            join Genre g 
+                    on s.idGenre = g.id
+            where g.id = :genre 
+                    and (s.title like :search
+                    or s.lyrics like :search)
+        """)
+    Integer countByGenre(String genre, @Param("search") String search);
 
 }
