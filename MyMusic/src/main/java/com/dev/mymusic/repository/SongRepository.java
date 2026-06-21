@@ -24,32 +24,32 @@ public interface SongRepository extends JpaRepository<Song, UUID> {
             """)
     Page<Song> filterGenreBySong(String search, Pageable pageable);
 
-    @Query("""
-            select g.name as genreName,
-                   s.id,
-                   s.title,
-                   s.lyrics
-            from Song s
-            join Genre g
-                  on s.idGenre = g.id
-            where g.id = :genre
-                  and (s.title like :search
-                  or s.lyrics like :search)
-            order by s.title
-            offset :offset rows
-            fetch next :pageSize rows only
-            """)
-    List<Song> findByGenreAndSearch(@Param("genre") String genre, @Param("search") String search, @Param("offset") Integer offset, @Param("pageSize") Integer pageSize);
-
-    @Query("""
-            select count(s.id) 
-            from Song s 
-            join Genre g 
-                    on s.idGenre = g.id
-            where g.id = :genre 
-                    and (s.title like :search
-                    or s.lyrics like :search)
-        """)
-    Integer countByGenre(String genre, @Param("search") String search);
+//    @Query("""
+//            select g.name as genreName,
+//                   s.id,
+//                   s.title,
+//                   s.lyrics
+//            from Song s
+//            join Genre g
+//                  on s.idGenre = g.id
+//            where g.id = :genre
+//                  and (s.title like :search
+//                  or s.lyrics like :search)
+//            order by s.title
+//            offset :offset rows
+//            fetch next :pageSize rows only
+//            """)
+//    List<Song> findByGenreAndSearch(@Param("genre") String genre, @Param("search") String search, @Param("offset") Integer offset, @Param("pageSize") Integer pageSize);
+//
+//    @Query("""
+//            select count(s.id)
+//            from Song s
+//            join Genre g
+//                    on s.idGenre = g.id
+//            where g.id = :genre
+//                    and (s.title like :search
+//                    or s.lyrics like :search)
+//        """)
+//    Integer countByGenre(String genre, @Param("search") String search);
 
 }

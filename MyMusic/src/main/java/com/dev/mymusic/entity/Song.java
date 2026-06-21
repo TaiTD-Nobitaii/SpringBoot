@@ -27,10 +27,10 @@ public class Song {
     @Column(name = "singer", columnDefinition = "nvarchar(MAX)")
     private String singer;
 
-    @Id
-    @GeneratedValue(strategy =  GenerationType.UUID)
-    @Column(name = "idGenre", updatable = false,nullable = false)
-    private UUID idGenre;
+//    @Id
+//    @GeneratedValue(strategy =  GenerationType.UUID)
+//    @Column(name = "idGenre", updatable = false,nullable = false)
+//    private UUID idGenre;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idGenre")

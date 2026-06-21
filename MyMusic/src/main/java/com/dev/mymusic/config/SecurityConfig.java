@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/users/**").permitAll()
                         .requestMatchers("/api/songs/**").permitAll()
+                        .requestMatchers("/api/playlist/**").permitAll()
 
                         // Cho phép truy cập tài liệu API Swagger UI công khai
                         .requestMatchers(
