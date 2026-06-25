@@ -1,7 +1,11 @@
 package com.dev.mymusic.controller;
 
+import com.dev.mymusic.dto.request.BaseRequestPaging;
 import com.dev.mymusic.dto.request.SongCreateRequest;
+import com.dev.mymusic.dto.request.SongRequest;
 import com.dev.mymusic.dto.request.SongUpdateRequest;
+import com.dev.mymusic.dto.response.BaseResponse;
+import com.dev.mymusic.dto.response.BaseResponsePaging;
 import com.dev.mymusic.dto.response.SongResponse;
 import com.dev.mymusic.service.SongService;
 import lombok.RequiredArgsConstructor;
@@ -81,4 +85,16 @@ public class SongController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @PostMapping("/listSong")
+    public ResponseEntity<BaseResponse<BaseResponsePaging<SongResponse>>> getAllSong(@RequestBody SongRequest songRequest) {
+        try {
+            BaseResponse<BaseResponsePaging<SongResponse>> songResponse = songService.findByGenreAndSearch(songRequest);
+            return ResponseEntity.ok(songResponse);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
 }

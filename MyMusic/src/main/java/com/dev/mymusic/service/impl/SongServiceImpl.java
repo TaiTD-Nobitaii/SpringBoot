@@ -1,7 +1,10 @@
 package com.dev.mymusic.service.impl;
 
 import com.dev.mymusic.dto.request.SongCreateRequest;
+import com.dev.mymusic.dto.request.SongRequest;
 import com.dev.mymusic.dto.request.SongUpdateRequest;
+import com.dev.mymusic.dto.response.BaseResponse;
+import com.dev.mymusic.dto.response.BaseResponsePaging;
 import com.dev.mymusic.dto.response.SongResponse;
 import com.dev.mymusic.entity.Genre;
 import com.dev.mymusic.entity.Song;
@@ -16,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -98,5 +103,47 @@ public class SongServiceImpl implements SongService {
         song.setStatus(false);
         songRepository.save(song);
         return null;
+    }
+
+    @Override
+    public BaseResponse<BaseResponsePaging<SongResponse>> findByGenreAndSearch(SongRequest songRequest) {
+        BaseResponse<BaseResponsePaging<SongResponse>> response = new BaseResponse<>();
+        try {
+            Genre genre = genreRepository.findById(songRequest.getIdGenre()).orElse(null);
+            if (genre == null) {
+                response.setMsg("Genre not found");
+                response.setCode(400);
+                return response;
+            }
+            /*
+            Những biến đầu vào của hàm repo findByGenreAndSearch nó sẽ tương ứng với các
+            trường thông tin của SongRequest extends BaseRequestPaging
+             */
+            Integer offSet = (songRequest.getCurrentPages() - 1) * songRequest.getPageSize();
+            List<Song> songs = songRepository.findByGenreAndSearch(
+                    songRequest.getIdGenre(),
+                    songRequest.getSearch(),
+                    offSet,
+                    songRequest.getPageSize());
+            // sử dụng mapper để chuyển kiểu dữ liệu từ song qua songResponse
+            List<SongResponse> listSongResponse = songs.stream().map(songMapper::songToSongResponse).toList();
+
+            //Đếm tất cả các bản ghi có trên mọi phân trang
+            Integer total = songRepository.countByGenre(songRequest.getIdGenre(), songRequest.getSearch());
+
+            BaseResponsePaging<SongResponse> responsePaging = new BaseResponsePaging<>();
+            responsePaging.setTotal(total);
+            responsePaging.setData(listSongResponse);
+
+            response.setMsg("Success");
+            response.setCode(200);
+            response.setData(responsePaging);
+            return response;
+        } catch (Exception e) {
+            response.setMsg("Something error");
+            response.setCode(400);
+            e.printStackTrace();
+            return response;
+        }
     }
 }

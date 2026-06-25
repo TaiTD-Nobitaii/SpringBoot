@@ -24,32 +24,29 @@ public interface SongRepository extends JpaRepository<Song, UUID> {
             """)
     Page<Song> filterGenreBySong(String search, Pageable pageable);
 
-//    @Query("""
-//            select g.name as genreName,
-//                   s.id,
-//                   s.title,
-//                   s.lyrics
-//            from Song s
-//            join Genre g
-//                  on s.idGenre = g.id
-//            where g.id = :genre
-//                  and (s.title like :search
-//                  or s.lyrics like :search)
-//            order by s.title
-//            offset :offset rows
-//            fetch next :pageSize rows only
-//            """)
-//    List<Song> findByGenreAndSearch(@Param("genre") String genre, @Param("search") String search, @Param("offset") Integer offset, @Param("pageSize") Integer pageSize);
-//
-//    @Query("""
-//            select count(s.id)
-//            from Song s
-//            join Genre g
-//                    on s.idGenre = g.id
-//            where g.id = :genre
-//                    and (s.title like :search
-//                    or s.lyrics like :search)
-//        """)
-//    Integer countByGenre(String genre, @Param("search") String search);
+    @Query("""
+            select s
+            from Song s
+            join Genre g
+                  on s.idGenre = g.id
+            where (:genre is null  or g.id = :genre)  
+                  and (s.title like concat('%', :search,'%') 
+                  or s.lyrics like concat('%', :search,'%'))
+            order by s.title
+            offset :offset rows
+            fetch next :pageSize rows only
+            """)
+    List<Song> findByGenreAndSearch(@Param("genre") UUID genre, @Param("search") String search, @Param("offset") Integer offset, @Param("pageSize") Integer pageSize);
+
+    @Query("""
+            select count(s.id)
+            from Song s
+            join Genre g
+                    on s.idGenre = g.id
+            where (:genre is null  or g.id = :genre)  
+                  and (s.title like concat('%', :search,'%') 
+                  or s.lyrics like concat('%', :search,'%'))
+        """)
+    Integer countByGenre(UUID genre, @Param("search") String search);
 
 }

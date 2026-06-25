@@ -3,6 +3,7 @@ package com.dev.mymusic.service;
 import com.dev.mymusic.dto.request.LoginRequest;
 import com.dev.mymusic.dto.request.UserCreateRequest;
 import com.dev.mymusic.dto.request.UserRequest;
+import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.LoginResponse;
 import com.dev.mymusic.dto.response.UserResponse;
 import jakarta.validation.Valid;
@@ -12,7 +13,7 @@ import java.util.UUID;
 
 public interface UserService {
 
-    LoginResponse login( LoginRequest loginRequest);
+    BaseResponse<LoginResponse> login(LoginRequest loginRequest);
 
     Page<UserResponse>getListUser(int page, int size, String search);
 

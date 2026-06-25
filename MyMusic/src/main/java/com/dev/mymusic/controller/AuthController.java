@@ -1,6 +1,7 @@
 package com.dev.mymusic.controller;
 
 import com.dev.mymusic.dto.request.LoginRequest;
+import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.LoginResponse;
 import com.dev.mymusic.service.UserService;
 import jakarta.validation.Valid;
@@ -16,8 +17,8 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login (@Valid @RequestBody LoginRequest loginRequest){
-        LoginResponse response = userService.login(loginRequest);
+    public ResponseEntity<BaseResponse<LoginResponse>> login (@Valid @RequestBody LoginRequest loginRequest){
+        BaseResponse<LoginResponse> response= userService.login(loginRequest);
         return ResponseEntity.ok(response);
     }
 }

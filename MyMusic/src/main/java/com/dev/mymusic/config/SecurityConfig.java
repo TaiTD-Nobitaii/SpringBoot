@@ -64,7 +64,7 @@ public class SecurityConfig {
                 );
 
         // Thêm bộ lọc JWT vào trước bộ lọc UsernamePasswordAuthenticationFilter mặc định của Spring
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

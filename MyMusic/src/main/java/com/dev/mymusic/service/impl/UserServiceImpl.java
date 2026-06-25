@@ -3,6 +3,7 @@ package com.dev.mymusic.service.impl;
 import com.dev.mymusic.dto.request.LoginRequest;
 import com.dev.mymusic.dto.request.UserCreateRequest;
 import com.dev.mymusic.dto.request.UserRequest;
+import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.LoginResponse;
 import com.dev.mymusic.dto.response.UserResponse;
 import com.dev.mymusic.entity.Role;
@@ -33,25 +34,35 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
-    public LoginResponse login(LoginRequest loginRequest) {
+    public BaseResponse<LoginResponse> login(LoginRequest loginRequest) {
+        BaseResponse<LoginResponse> response = new BaseResponse<>();
         try {
-            User user = userRepository.findByEmail(loginRequest.getEmail())
-                    .orElseThrow();
+            User user = userRepository.findByEmail(loginRequest.getEmail()).orElse(null);
+            if (user == null) {
+                response.setMsg("User not found");
+                response.setCode(400);
+                return response;
+            }
             Boolean checkPassword = passwordEncoder.matches(loginRequest.getPassword(), user.getPassword());
             if (checkPassword) {
                 String token = jwtTokenProvider.generateToken(user.getEmail());
-                LoginResponse response = new LoginResponse();
-                response.setToken(token);
-                response.setUuid(user.getId());
-                response.setEmail(user.getEmail());
-                response.setImage(user.getImage());
+                LoginResponse loginResponse = new LoginResponse();
+                loginResponse.setToken(token);
+                loginResponse.setUuid(user.getId());
+                loginResponse.setEmail(user.getEmail());
+                loginResponse.setImage(user.getImage());
+                response.setData(loginResponse);
+                response.setCode(200);
+                response.setMsg("Login Success");
                 return response;
             } else {
-                throw new Exception("Invalid password");
+                response.setMsg("Wrong Password");
+                response.setCode(400);
+                return response;
             }
         } catch (Exception e) {
-            LoginResponse response = new LoginResponse();
-            response.setMessage("Email not valid");
+            response.setMsg("Something error");
+            response.setCode(400);
             e.printStackTrace();
             return response;
 

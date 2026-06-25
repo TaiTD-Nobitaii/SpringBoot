@@ -15,7 +15,6 @@ public interface SongMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "genre", ignore = true)
-    @Mapping(target = "artist", ignore = true)
     @Mapping(target = "duration", ignore = true)
     @Mapping(target = "quantity", ignore = true)
     @Mapping(target = "createAt", ignore = true)

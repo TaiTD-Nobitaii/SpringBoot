@@ -27,18 +27,13 @@ public class Song {
     @Column(name = "singer", columnDefinition = "nvarchar(MAX)")
     private String singer;
 
-//    @Id
-//    @GeneratedValue(strategy =  GenerationType.UUID)
-//    @Column(name = "idGenre", updatable = false,nullable = false)
-//    private UUID idGenre;
+
+    @Column(name = "idGenre",nullable = false)
+    private UUID idGenre;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idGenre")
+    @JoinColumn(name = "idGenre",updatable = false,insertable = false)
     private Genre genre;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idArtist")
-    private Artist artist;
 
     @Column(name = "lyrics", columnDefinition = "nvarchar(MAX)")
     private String lyrics;

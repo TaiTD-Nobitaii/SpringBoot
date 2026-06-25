@@ -2,7 +2,10 @@ package com.dev.mymusic.service;
 
 
 import com.dev.mymusic.dto.request.SongCreateRequest;
+import com.dev.mymusic.dto.request.SongRequest;
 import com.dev.mymusic.dto.request.SongUpdateRequest;
+import com.dev.mymusic.dto.response.BaseResponse;
+import com.dev.mymusic.dto.response.BaseResponsePaging;
 import com.dev.mymusic.dto.response.SongResponse;
 import org.springframework.data.domain.Page;
 
@@ -20,4 +23,6 @@ public interface SongService {
     SongResponse updateSong(UUID id, SongUpdateRequest songUpdateRequest);
 
     Void deleteSong(UUID id);
+
+    BaseResponse<BaseResponsePaging<SongResponse>>findByGenreAndSearch(SongRequest songRequest);
 }

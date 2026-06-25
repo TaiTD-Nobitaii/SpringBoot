@@ -22,7 +22,7 @@ public class PlaylistServiceImpl implements PlaylistService {
     @Override
     public List<PlaylistResponse> getAllPlaylists() {
         List<Playlist> playLists = playlistRepository.findAll();
-        return playlistMapper.playlistsToPlaylistResponses(playLists);
+        return playLists.stream().map(playlistMapper::playlistToPlaylistResponse).toList();
     }
 
 //    @Override

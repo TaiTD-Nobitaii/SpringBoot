@@ -12,5 +12,4 @@ public interface PlaylistMapper {
 
     @Mapping(source = "user.name", target = "nameUser")
     PlaylistResponse playlistToPlaylistResponse(Playlist playlist);
-    List<PlaylistResponse> playlistsToPlaylistResponses(List<Playlist> playlists);
 }
