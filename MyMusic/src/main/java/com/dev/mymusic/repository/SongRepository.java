@@ -14,8 +14,9 @@ import java.util.UUID;
 @Repository
 public interface SongRepository extends JpaRepository<Song, UUID> {
 
-    Page<Song> findByTitleOrLyricsContainingIgnoreCase(String title, String lyrics, Pageable pageable);
 
+
+    Page<Song> findByTitleOrLyricsContainingIgnoreCase(String title, String lyrics, Pageable pageable);
     @Query("""
             SELECT s
                FROM Song s

@@ -1,13 +1,13 @@
 package com.dev.mymusic.controller;
 
+import com.dev.mymusic.dto.request.PlaylistRequest;
+import com.dev.mymusic.dto.response.BaseResponse;
+import com.dev.mymusic.dto.response.BaseResponsePaging;
 import com.dev.mymusic.dto.response.PlaylistResponse;
 import com.dev.mymusic.service.PlaylistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,5 +33,17 @@ public class PlaylistController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BaseResponse<PlaylistResponse>>UpdatePlaylist(@PathVariable UUID id, @RequestBody PlaylistRequest playlistRequest) {
+        BaseResponse<PlaylistResponse> playlistResponse = playlistService.updatePlaylist(id, playlistRequest);
+        return ResponseEntity.ok(playlistResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<BaseResponse<Void>>DeletePlaylist(@PathVariable UUID id) {
+        BaseResponse<Void> response = playlistService.deletePlaylist(id);
+        return ResponseEntity.ok(response);
     }
 }

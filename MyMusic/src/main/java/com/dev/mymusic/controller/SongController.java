@@ -1,6 +1,5 @@
 package com.dev.mymusic.controller;
 
-import com.dev.mymusic.dto.request.BaseRequestPaging;
 import com.dev.mymusic.dto.request.SongCreateRequest;
 import com.dev.mymusic.dto.request.SongRequest;
 import com.dev.mymusic.dto.request.SongUpdateRequest;
@@ -87,13 +86,9 @@ public class SongController {
     }
 
     @PostMapping("/listSong")
-    public ResponseEntity<BaseResponse<BaseResponsePaging<SongResponse>>> getAllSong(@RequestBody SongRequest songRequest) {
-        try {
-            BaseResponse<BaseResponsePaging<SongResponse>> songResponse = songService.findByGenreAndSearch(songRequest);
-            return ResponseEntity.ok(songResponse);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    public ResponseEntity<BaseResponse<BaseResponsePaging<SongResponse>>> getAllSong(@RequestBody SongRequest songRequest)  {
+        BaseResponse<BaseResponsePaging<SongResponse>> songResponse = songService.findByGenreAndSearch(songRequest);
+        return ResponseEntity.ok(songResponse);
 
     }
 

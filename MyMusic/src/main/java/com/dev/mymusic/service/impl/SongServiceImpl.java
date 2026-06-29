@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -56,10 +57,16 @@ public class SongServiceImpl implements SongService {
 
     @Override
     public SongResponse getSongById(UUID id) {
-        if (songRepository.findById(id).isEmpty()) {
+        Optional<Song> song = songRepository.findById(id);
+
+        if(song.isEmpty()) {
             throw new IllegalArgumentException("Song not found");
         }
-        return songMapper.songToSongResponse(songRepository.findById(id).get());
+        return songMapper.songToSongResponse(song.get());
+
+//        return songMapper.songToSongResponse(songRepository.findById(id).orElseThrow(
+//                () -> new IllegalArgumentException("Song not found")
+//        ));
     }
 
     @Override
