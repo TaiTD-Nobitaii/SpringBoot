@@ -1,6 +1,7 @@
 package com.dev.mymusic.service.impl;
 
 import com.dev.mymusic.dto.request.PlaylistDetailCreateRequest;
+import com.dev.mymusic.dto.request.PlaylistDetailUpdateRequest;
 import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.PlaylistDetailResponse;
 import com.dev.mymusic.entity.Playlist;
@@ -83,7 +84,44 @@ public class PlaylistDetailServiceImpl implements PlaylistDetailService {
                     .code(200)
                     .build();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return BaseResponse.<PlaylistDetailResponse>builder()
+                    .msg("Something error")
+                    .code(200)
+                    .build();
+        }
+    }
+
+    @Override
+    public BaseResponse<PlaylistDetailResponse> update(UUID id, PlaylistDetailUpdateRequest playlistDetailUpdateRequest) {
+        try {
+            PlaylistDetail playlistDetail = playlistDetailRepository.findById(id).orElse(null);
+            if(playlistDetail == null){
+                return BaseResponse.<PlaylistDetailResponse>builder()
+                        .msg("Update error")
+                        .code(400)
+                        .build();
+            }
+
+            // Tại sao findById của playlist .get thì truyền dc ID vào còn .orElse thì ko dc?
+            Playlist playlist = playlistRepository.findById(id).orElse(null);
+//            Playlist playlist = playlistRepository.findById(id).get();
+            // Nhưng Song thì được
+            Song song = songRepository.findById(id).orElse(null);
+
+            playlistDetail.setPlaylist(playlist);
+            playlistDetail.setSong(song);
+            playlistDetailRepository.save(playlistDetail);
+            PlaylistDetailResponse response = playlistDetailMapper.playlistDetailResponse(playlistDetail);
+            return BaseResponse.<PlaylistDetailResponse>builder()
+                    .msg("Update playlistDetail successfully")
+                    .code(200)
+                    .data(response)
+                    .build();
+        } catch (Exception e) {
+            return BaseResponse.<PlaylistDetailResponse>builder()
+                    .msg("Something error")
+                    .code(400)
+                    .build();
         }
     }
 }

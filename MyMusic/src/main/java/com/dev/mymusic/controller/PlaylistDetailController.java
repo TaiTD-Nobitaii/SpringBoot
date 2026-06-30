@@ -1,6 +1,7 @@
 package com.dev.mymusic.controller;
 
 import com.dev.mymusic.dto.request.PlaylistDetailCreateRequest;
+import com.dev.mymusic.dto.request.PlaylistDetailUpdateRequest;
 import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.BaseResponsePaging;
 import com.dev.mymusic.dto.response.PlaylistDetailResponse;
@@ -27,6 +28,12 @@ public class PlaylistDetailController {
     @PostMapping
     public ResponseEntity<BaseResponse<PlaylistDetailResponse>> createPlaylistDetail(@RequestBody PlaylistDetailCreateRequest playlistDetailCreateRequest) {
         BaseResponse<PlaylistDetailResponse> response = playlistDetailService.create(playlistDetailCreateRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<BaseResponse<PlaylistDetailResponse>> updatePlaylistDetailById(@PathVariable UUID id, @RequestBody PlaylistDetailUpdateRequest playlistDetailUpdateRequest) {
+        BaseResponse<PlaylistDetailResponse> response = playlistDetailService.update(id, playlistDetailUpdateRequest);
         return ResponseEntity.ok(response);
     }
 
