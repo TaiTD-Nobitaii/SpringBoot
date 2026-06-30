@@ -59,7 +59,7 @@ public class SongServiceImpl implements SongService {
     public SongResponse getSongById(UUID id) {
         Optional<Song> song = songRepository.findById(id);
 
-        if(song.isEmpty()) {
+        if (song.isEmpty()) {
             throw new IllegalArgumentException("Song not found");
         }
         return songMapper.songToSongResponse(song.get());
@@ -90,17 +90,42 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public SongResponse updateSong(UUID id, SongUpdateRequest songUpdateRequest) {
-        Song song = songRepository.findById(id).orElseThrow();
-        Genre genre = genreRepository.findById(songUpdateRequest.getGenreId()).orElseThrow();
-        song.setTitle(songUpdateRequest.getTitle());
-        song.setSinger(songUpdateRequest.getSinger());
-        song.setGenre(genre);
-        song.setSinger(songUpdateRequest.getSinger());
-        song.setPath(songUpdateRequest.getPath());
-        song.setDuration(songUpdateRequest.getDuration());
-        songRepository.save(song);
-        return songMapper.songToSongResponse(song);
+    public BaseResponse<SongResponse> updateSong(UUID id, SongUpdateRequest songUpdateRequest) {
+        try {
+            Song song = songRepository.findById(id).orElse(null);
+            if (song == null) {
+                return BaseResponse.<SongResponse>builder()
+                        .code(404)
+                        .msg("Song not found")
+                        .build();
+            }
+            Genre genre = genreRepository.findById(songUpdateRequest.getGenreId()).orElse(null);
+            if (genre == null) {
+                return BaseResponse.<SongResponse>builder()
+                        .code(404)
+                        .msg("Genre not found")
+                        .build();
+            }
+            song.setTitle(songUpdateRequest.getTitle());
+            song.setSinger(songUpdateRequest.getSinger());
+            song.setGenre(genre);
+            song.setSinger(songUpdateRequest.getSinger());
+            song.setPath(songUpdateRequest.getPath());
+            song.setDuration(songUpdateRequest.getDuration());
+            songRepository.save(song);
+            SongResponse songResponse = songMapper.songToSongResponse(song);
+
+            return BaseResponse.<SongResponse>builder()
+                    .code(200)
+                    .msg("Song updated successfully")
+                    .data(songResponse)
+                    .build();
+        } catch (Exception e) {
+            return BaseResponse.<SongResponse>builder()
+                    .code(500)
+                    .msg("Something error")
+                    .build();
+        }
     }
 
     @Override

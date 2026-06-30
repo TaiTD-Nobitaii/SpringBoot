@@ -9,6 +9,7 @@ import com.dev.mymusic.dto.response.SongResponse;
 import com.dev.mymusic.service.SongService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,12 +67,12 @@ public class SongController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<SongResponse> updateSong(@PathVariable UUID id, @RequestBody SongUpdateRequest songUpdateRequest) {
+    public ResponseEntity<BaseResponse<SongResponse>> updateSong(@PathVariable UUID id, @RequestBody SongUpdateRequest songUpdateRequest) {
         try {
-            SongResponse response = songService.updateSong(id, songUpdateRequest);
-            return ResponseEntity.ok(response);
+            BaseResponse<SongResponse> response = songService.updateSong(id, songUpdateRequest);
+            return ResponseEntity.status(response.getCode()).body(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 

@@ -18,12 +18,18 @@ public class PlaylistDetail {
     @GeneratedValue(strategy =  GenerationType.UUID)
     @Column(name = "id", updatable = false,nullable = false)
     private UUID id;
+    
+    @Column(name = "idPlaylist",nullable = false)
+    private UUID idPlaylist;
+
+    @Column(name = "idSong",nullable = false)
+    private UUID idSong;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idPlaylist", nullable = false)
+    @JoinColumn(name = "idPlaylist", nullable = false, updatable = false)
     private Playlist playlist;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idSong")
+    @JoinColumn(name = "idSong",  nullable = false, updatable = false)
     private Song song;
 }

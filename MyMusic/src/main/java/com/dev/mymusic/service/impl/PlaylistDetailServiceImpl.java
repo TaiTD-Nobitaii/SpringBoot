@@ -103,8 +103,8 @@ public class PlaylistDetailServiceImpl implements PlaylistDetailService {
             }
 
             // Tại sao findById của playlist .get thì truyền dc ID vào còn .orElse thì ko dc?
-            Playlist playlist = playlistRepository.findById(id).orElse(null);
-//            Playlist playlist = playlistRepository.findById(id).get();
+//            Playlist playlist = playlistRepository.findById(id).orElse(null);
+            Playlist playlist = playlistRepository.findById(id).get();
             // Nhưng Song thì được
             Song song = songRepository.findById(id).orElse(null);
 
