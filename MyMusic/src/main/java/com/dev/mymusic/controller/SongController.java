@@ -86,6 +86,7 @@ public class SongController {
         }
     }
 
+    // Không chạy dc api này
     @PostMapping("/listSong")
     public ResponseEntity<BaseResponse<BaseResponsePaging<SongResponse>>> getAllSong(@RequestBody SongRequest songRequest)  {
         BaseResponse<BaseResponsePaging<SongResponse>> songResponse = songService.findByGenreAndSearch(songRequest);

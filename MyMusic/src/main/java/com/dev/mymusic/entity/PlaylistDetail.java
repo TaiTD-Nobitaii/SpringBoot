@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
+
 @Entity
 @Table(name = "PLAYLIST_DETAIL")
 @Data
@@ -15,14 +16,16 @@ import java.util.UUID;
 public class PlaylistDetail {
 
     @Id
-    @GeneratedValue(strategy =  GenerationType.UUID)
-    @Column(name = "id", updatable = false,nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
-    
-    @Column(name = "idPlaylist",nullable = false)
+
+    //    @Column(name = "idPlaylist",nullable = false)
+    @Column(name = "idPlaylist", insertable = false, updatable = false)
     private UUID idPlaylist;
 
-    @Column(name = "idSong",nullable = false)
+    //    @Column(name = "idSong",nullable = false)
+    @Column(name = "idSong", insertable = false, updatable = false)
     private UUID idSong;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,6 +33,6 @@ public class PlaylistDetail {
     private Playlist playlist;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idSong",  nullable = false, updatable = false)
+    @JoinColumn(name = "idSong", nullable = false, updatable = false)
     private Song song;
 }

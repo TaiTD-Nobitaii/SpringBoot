@@ -11,13 +11,16 @@ public interface PlaylistDetailMapper {
 
     //ignore: là bỏ qua mapping
     @Mapping(target = "id", ignore = true)
+    // out - in
     PlaylistDetail toPlaylistDetail(PlaylistDetailCreateRequest playlistDetailCreateRequest);
+
 
     //target: là mapping
     //Chuyển các trường dữ liệu cần thiết mà bị khác để map với nhau
     @Mapping(source = "playlist.title", target =  "playlistTitle")
     @Mapping(source = "song.title", target =  "songTitle")
     @Mapping(source = "song.singer", target =  "singer")
+    // out - in
     PlaylistDetailResponse playlistDetailResponse(PlaylistDetail playlistDetail);
     
     /*
