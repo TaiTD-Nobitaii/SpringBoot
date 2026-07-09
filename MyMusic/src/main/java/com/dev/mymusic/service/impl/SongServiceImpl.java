@@ -1,5 +1,6 @@
 package com.dev.mymusic.service.impl;
 
+import com.dev.mymusic.dto.request.AddSongToPlayList;
 import com.dev.mymusic.dto.request.SongCreateRequest;
 import com.dev.mymusic.dto.request.SongRequest;
 import com.dev.mymusic.dto.request.SongUpdateRequest;
@@ -7,9 +8,12 @@ import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.BaseResponsePaging;
 import com.dev.mymusic.dto.response.SongResponse;
 import com.dev.mymusic.entity.Genre;
+import com.dev.mymusic.entity.Playlist;
+import com.dev.mymusic.entity.PlaylistDetail;
 import com.dev.mymusic.entity.Song;
 import com.dev.mymusic.mapper.SongMapper;
 import com.dev.mymusic.repository.GenreRepository;
+import com.dev.mymusic.repository.PlaylistDetailRepository;
 import com.dev.mymusic.repository.SongRepository;
 import com.dev.mymusic.service.SongService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,7 @@ public class SongServiceImpl implements SongService {
     private final SongRepository songRepository;
     private final GenreRepository genreRepository;
     private final SongMapper songMapper;
+    private final PlaylistDetailRepository playlistDetailRepository;
 
     @Override
     public SongResponse createSong(SongCreateRequest songCreateRequest) {
@@ -170,6 +175,43 @@ public class SongServiceImpl implements SongService {
             response.setMsg("Success");
             response.setCode(200);
             response.setData(responsePaging);
+            return response;
+        } catch (Exception e) {
+            response.setMsg("Something error");
+            response.setCode(400);
+            e.printStackTrace();
+            return response;
+        }
+    }
+
+    @Override
+    public BaseResponse<List<Song>> addSongMyPlaylist(AddSongToPlayList request) {
+        BaseResponse response = new BaseResponse<>();
+        try {
+            songRepository.removeAllSongById(request.deleteSongId);
+            List<PlaylistDetail> playlistDetails = new ArrayList<>();
+            for (UUID ids : request.addSongId) {
+                PlaylistDetail playlistDetail = new PlaylistDetail();
+
+                Playlist playlist = new Playlist();
+                playlist.setId(ids);
+                playlistDetail.setPlaylist(playlist);
+
+                Song song = new Song();
+                song.setId(ids);
+                playlistDetail.setSong(song);
+
+                playlistDetails.add(playlistDetail);
+
+            }
+            playlistDetailRepository.saveAll(playlistDetails);
+            List<Song> songList = songRepository.getMyPlaylist(request.playlistId);
+            for (Song song : songList) {
+                System.out.println(song);
+            }
+            response.setMsg("Success");
+            response.setCode(200);
+            response.setData(songList);
             return response;
         } catch (Exception e) {
             response.setMsg("Something error");

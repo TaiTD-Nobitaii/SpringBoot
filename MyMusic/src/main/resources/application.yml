@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:sqlserver://localhost:1433;databaseName=MyMusic;encrypt=true;trustServerCertificate=true;
+    url: jdbc:sqlserver://localhost:11433;databaseName=MyMusic;encrypt=true;trustServerCertificate=true;
     username: sa
     password: Tai171003@
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
