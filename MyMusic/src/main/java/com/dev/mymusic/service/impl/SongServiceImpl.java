@@ -14,6 +14,7 @@ import com.dev.mymusic.entity.Song;
 import com.dev.mymusic.mapper.SongMapper;
 import com.dev.mymusic.repository.GenreRepository;
 import com.dev.mymusic.repository.PlaylistDetailRepository;
+import com.dev.mymusic.repository.PlaylistRepository;
 import com.dev.mymusic.repository.SongRepository;
 import com.dev.mymusic.service.SongService;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +37,8 @@ public class SongServiceImpl implements SongService {
     private final GenreRepository genreRepository;
     private final SongMapper songMapper;
     private final PlaylistDetailRepository playlistDetailRepository;
+    private final PlaylistRepository playlistRepository;
+
 
     @Override
     public SongResponse createSong(SongCreateRequest songCreateRequest) {
@@ -149,7 +152,7 @@ public class SongServiceImpl implements SongService {
             Genre genre = genreRepository.findById(songRequest.getIdGenre()).orElse(null);
             if (genre == null) {
                 response.setMsg("Genre not found");
-                response.setCode(400);
+                response.setCode(404);
                 return response;
             }
             /*
@@ -188,22 +191,46 @@ public class SongServiceImpl implements SongService {
     public BaseResponse<List<Song>> addSongMyPlaylist(AddSongToPlayList request) {
         BaseResponse response = new BaseResponse<>();
         try {
+//            PlaylistDetail playlistDetail = playlistDetailRepository.findById(request.getPlaylistDetailId()).orElse(null);
+//            if (playlistDetail == null) {
+//                response.setCode(400);
+//                response.setMsg("PlaylistDetail not found");
+//                return response;
+//            }
+
+            Playlist playlist = new Playlist();
+            playlist.setId(request.playlistId);
+            playlist = playlistRepository.findById(playlist.getId()).orElse(null);
+            if (playlist == null) {
+                response.setCode(404);
+                response.setMsg("Playlist not found" + playlist);
+                return response;
+            }
+            List<UUID> songNotFoundIds = new ArrayList<>();
+
+
             songRepository.removeAllSongById(request.deleteSongId);
             List<PlaylistDetail> playlistDetails = new ArrayList<>();
             for (UUID ids : request.addSongId) {
                 PlaylistDetail playlistDetail = new PlaylistDetail();
-
-                Playlist playlist = new Playlist();
-                playlist.setId(ids);
                 playlistDetail.setPlaylist(playlist);
 
                 Song song = new Song();
                 song.setId(ids);
+                song = songRepository.findById(ids).orElse(null);
+                if (song == null) {
+                    songNotFoundIds.add(ids);
+                }
                 playlistDetail.setSong(song);
-
                 playlistDetails.add(playlistDetail);
-
             }
+
+            if (!songNotFoundIds.isEmpty()) {
+                response.setCode(404);
+                response.setMsg("Song not found" + songNotFoundIds);
+                return response;
+            }
+
             playlistDetailRepository.saveAll(playlistDetails);
             List<Song> songList = songRepository.getMyPlaylist(request.playlistId);
             for (Song song : songList) {
@@ -215,7 +242,7 @@ public class SongServiceImpl implements SongService {
             return response;
         } catch (Exception e) {
             response.setMsg("Something error");
-            response.setCode(400);
+            response.setCode(500);
             e.printStackTrace();
             return response;
         }

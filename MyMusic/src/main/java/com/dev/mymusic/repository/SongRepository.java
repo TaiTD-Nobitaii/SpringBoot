@@ -53,7 +53,7 @@ public interface SongRepository extends JpaRepository<Song, UUID> {
     Integer countByGenre(UUID genre, @Param("search") String search);
 
     @Query("  Select s from Song s join PlaylistDetail p on s.id = p.song.id \n" +
-            "  where p.playlist.id = :idPlayList ")
+            "  where p.playlist.id = :idPlaylist ")
     List<Song> getMyPlaylist(@Param("idPlaylist") UUID idPlaylist);
 
     @Transactional
