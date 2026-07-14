@@ -1,10 +1,7 @@
 package com.dev.mymusic.service;
 
 
-import com.dev.mymusic.dto.request.AddSongToPlayList;
-import com.dev.mymusic.dto.request.SongCreateRequest;
-import com.dev.mymusic.dto.request.SongRequest;
-import com.dev.mymusic.dto.request.SongUpdateRequest;
+import com.dev.mymusic.dto.request.*;
 import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.BaseResponsePaging;
 import com.dev.mymusic.dto.response.SongResponse;
@@ -31,4 +28,6 @@ public interface SongService {
     BaseResponse<BaseResponsePaging<SongResponse>>findByGenreAndSearch(SongRequest songRequest);
 
     BaseResponse<List<Song>> addSongMyPlaylist(@RequestBody AddSongToPlayList request);
+
+    BaseResponse<List<Song>> addSongFavourite(@RequestBody AddSongToSongFavourite addSongToSongFavourite);
 }

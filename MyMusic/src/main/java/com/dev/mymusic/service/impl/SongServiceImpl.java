@@ -1,21 +1,12 @@
 package com.dev.mymusic.service.impl;
 
-import com.dev.mymusic.dto.request.AddSongToPlayList;
-import com.dev.mymusic.dto.request.SongCreateRequest;
-import com.dev.mymusic.dto.request.SongRequest;
-import com.dev.mymusic.dto.request.SongUpdateRequest;
+import com.dev.mymusic.dto.request.*;
 import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.BaseResponsePaging;
 import com.dev.mymusic.dto.response.SongResponse;
-import com.dev.mymusic.entity.Genre;
-import com.dev.mymusic.entity.Playlist;
-import com.dev.mymusic.entity.PlaylistDetail;
-import com.dev.mymusic.entity.Song;
+import com.dev.mymusic.entity.*;
 import com.dev.mymusic.mapper.SongMapper;
-import com.dev.mymusic.repository.GenreRepository;
-import com.dev.mymusic.repository.PlaylistDetailRepository;
-import com.dev.mymusic.repository.PlaylistRepository;
-import com.dev.mymusic.repository.SongRepository;
+import com.dev.mymusic.repository.*;
 import com.dev.mymusic.service.SongService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,6 +29,8 @@ public class SongServiceImpl implements SongService {
     private final SongMapper songMapper;
     private final PlaylistDetailRepository playlistDetailRepository;
     private final PlaylistRepository playlistRepository;
+    private final UserRepository userRepository;
+    private final SongFavouriteRepository songFavouriteRepository;
 
 
     @Override
@@ -244,6 +237,60 @@ public class SongServiceImpl implements SongService {
             response.setMsg("Something error");
             response.setCode(500);
             e.printStackTrace();
+            return response;
+        }
+    }
+
+    @Override
+    public BaseResponse<List<Song>> addSongFavourite(AddSongToSongFavourite addSongToSongFavourite) {
+        BaseResponse response = new BaseResponse();
+        try {
+            Song song = new Song();
+            song.setId(addSongToSongFavourite.getIdSong());
+            song = songRepository.findById(addSongToSongFavourite.getIdSong()).orElse(null);
+            if (song == null) {
+                response.setCode(404);
+                response.setMsg("Song not found");
+                return response;
+            }
+
+            List<UUID> usersNotFound = new ArrayList<>();
+            songRepository.removeAllSongFavouriteById(addSongToSongFavourite.getDeleteSongId());
+
+            List<SongFavourite> songFavourites = new ArrayList<>();
+            for (UUID ids : addSongToSongFavourite.getAddSongId()) {
+                SongFavourite songFavourite = new SongFavourite();
+                songFavourite.setSong(song);
+
+                User user = new User();
+                user.setId(ids);
+                user = userRepository.findById(ids).orElse(null);
+                if(user == null){
+                    usersNotFound.add(ids);
+                }
+
+                songFavourite.setUser(user);
+                songFavourites.add(songFavourite);
+                if (!usersNotFound.isEmpty()) {
+                    response.setCode(404);
+                    response.setMsg("User not found");
+                    return response;
+                }
+
+                songFavouriteRepository.saveAll(songFavourites);
+                List<Song> songs = songRepository.getSongFavourite(addSongToSongFavourite.getIdSong());
+                for (Song song: songs){
+                    System.out.println(song);
+                }
+                response.setMsg("Success");
+                response.setCode(200);
+                response.setData(songs);
+                return response;
+
+            }
+        } catch (Exception e) {
+            response.setMsg("Somethings error");
+            response.setCode(500);
             return response;
         }
     }

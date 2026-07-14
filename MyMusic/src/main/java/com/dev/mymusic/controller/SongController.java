@@ -1,9 +1,6 @@
 package com.dev.mymusic.controller;
 
-import com.dev.mymusic.dto.request.AddSongToPlayList;
-import com.dev.mymusic.dto.request.SongCreateRequest;
-import com.dev.mymusic.dto.request.SongRequest;
-import com.dev.mymusic.dto.request.SongUpdateRequest;
+import com.dev.mymusic.dto.request.*;
 import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.BaseResponsePaging;
 import com.dev.mymusic.dto.response.SongResponse;
@@ -11,6 +8,7 @@ import com.dev.mymusic.entity.Song;
 import com.dev.mymusic.service.SongService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -99,5 +97,10 @@ public class SongController {
     @PostMapping("/add-song-to-playlist")
     public ResponseEntity<BaseResponse<List<Song>>> addSongToPlaylist(@RequestBody AddSongToPlayList request) {
         return ResponseEntity.ok(songService.addSongMyPlaylist(request));
+    }
+
+    @PostMapping("/add-song-to-favourite")
+    public ResponseEntity<BaseResponse<List<Song>>> addSongToSongFavourite(@RequestBody AddSongToSongFavourite addSongToSongFavourite){
+        return ResponseEntity.ok(songService.addSongFavourite(addSongToSongFavourite);
     }
 }
