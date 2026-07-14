@@ -3,6 +3,7 @@ package com.dev.mymusic.controller;
 import com.dev.mymusic.dto.request.*;
 import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.BaseResponsePaging;
+import com.dev.mymusic.dto.response.ListSongMyFavouriteResponse;
 import com.dev.mymusic.dto.response.SongResponse;
 import com.dev.mymusic.entity.Song;
 import com.dev.mymusic.service.SongService;
@@ -99,8 +100,13 @@ public class SongController {
         return ResponseEntity.ok(songService.addSongMyPlaylist(request));
     }
 
-    @PostMapping("/add-song-to-favourite")
-    public ResponseEntity<BaseResponse<List<Song>>> addSongToSongFavourite(@RequestBody AddSongToSongFavourite addSongToSongFavourite){
-        return ResponseEntity.ok(songService.addSongFavourite(addSongToSongFavourite);
+//    @PostMapping("/add-song-to-favourite")
+//    public ResponseEntity<BaseResponse<List<Song>>> addSongToSongFavourite(@RequestBody AddSongToSongFavourite addSongToSongFavourite){
+//        return ResponseEntity.ok(songService.addSongFavourite(addSongToSongFavourite);
+//    }
+
+    @PostMapping("/add-song-to-myfavouirte")
+    public ResponseEntity<BaseResponse<List<ListSongMyFavouriteResponse>>> addSongToMyFavourite(@RequestBody AddSongToMyFavourite request) {
+        return ResponseEntity.ok(songService.addSongToMyFavourite(request));
     }
 }

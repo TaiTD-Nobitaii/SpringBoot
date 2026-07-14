@@ -10,9 +10,8 @@ import java.util.UUID;
 @Data
 @Getter
 @Setter
-public class AddSongToSongFavourite {
+public class AddSongToMyFavourite {
+
     private UUID idUser;
     private List<UUID> addSongId;
-    private List<UUID> deleteSongId;
-
 }

@@ -3,6 +3,7 @@ package com.dev.mymusic.service.impl;
 import com.dev.mymusic.dto.request.*;
 import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.BaseResponsePaging;
+import com.dev.mymusic.dto.response.ListSongMyFavouriteResponse;
 import com.dev.mymusic.dto.response.SongResponse;
 import com.dev.mymusic.entity.*;
 import com.dev.mymusic.mapper.SongMapper;
@@ -95,17 +96,11 @@ public class SongServiceImpl implements SongService {
         try {
             Song song = songRepository.findById(id).orElse(null);
             if (song == null) {
-                return BaseResponse.<SongResponse>builder()
-                        .code(404)
-                        .msg("Song not found")
-                        .build();
+                return BaseResponse.<SongResponse>builder().code(404).msg("Song not found").build();
             }
             Genre genre = genreRepository.findById(songUpdateRequest.getGenreId()).orElse(null);
             if (genre == null) {
-                return BaseResponse.<SongResponse>builder()
-                        .code(404)
-                        .msg("Genre not found")
-                        .build();
+                return BaseResponse.<SongResponse>builder().code(404).msg("Genre not found").build();
             }
             song.setTitle(songUpdateRequest.getTitle());
             song.setSinger(songUpdateRequest.getSinger());
@@ -116,16 +111,9 @@ public class SongServiceImpl implements SongService {
             songRepository.save(song);
             SongResponse songResponse = songMapper.songToSongResponse(song);
 
-            return BaseResponse.<SongResponse>builder()
-                    .code(200)
-                    .msg("Song updated successfully")
-                    .data(songResponse)
-                    .build();
+            return BaseResponse.<SongResponse>builder().code(200).msg("Song updated successfully").data(songResponse).build();
         } catch (Exception e) {
-            return BaseResponse.<SongResponse>builder()
-                    .code(500)
-                    .msg("Something error")
-                    .build();
+            return BaseResponse.<SongResponse>builder().code(500).msg("Something error").build();
         }
     }
 
@@ -153,11 +141,7 @@ public class SongServiceImpl implements SongService {
             trường thông tin của SongRequest extends BaseRequestPaging
              */
             Integer offSet = (songRequest.getCurrentPages() - 1) * songRequest.getPageSize();
-            List<Song> songs = songRepository.findByGenreAndSearch(
-                    songRequest.getIdGenre(),
-                    songRequest.getSearch(),
-                    offSet,
-                    songRequest.getPageSize());
+            List<Song> songs = songRepository.findByGenreAndSearch(songRequest.getIdGenre(), songRequest.getSearch(), offSet, songRequest.getPageSize());
             // sử dụng mapper để chuyển kiểu dữ liệu từ song qua songResponse
             List<SongResponse> listSongResponse = songs.stream().map(songMapper::songToSongResponse).toList();
 
@@ -242,56 +226,117 @@ public class SongServiceImpl implements SongService {
     }
 
     @Override
-    public BaseResponse<List<Song>> addSongFavourite(AddSongToSongFavourite addSongToSongFavourite) {
-        BaseResponse response = new BaseResponse();
+    public BaseResponse<List<ListSongMyFavouriteResponse>> addSongToMyFavourite(AddSongToMyFavourite addSongToMyFavourite) {
+        BaseResponse response = new BaseResponse<>();
         try {
-            Song song = new Song();
-            song.setId(addSongToSongFavourite.getIdSong());
-            song = songRepository.findById(addSongToSongFavourite.getIdSong()).orElse(null);
-            if (song == null) {
+            User user = new User();
+            user.setId(addSongToMyFavourite.getIdUser());
+            user = userRepository.findById(addSongToMyFavourite.getIdUser()).orElse(null);
+            if (user == null) {
                 response.setCode(404);
-                response.setMsg("Song not found");
+                response.setMsg("User not found" + addSongToMyFavourite.getIdUser());
                 return response;
             }
 
-            List<UUID> usersNotFound = new ArrayList<>();
-            songRepository.removeAllSongFavouriteById(addSongToSongFavourite.getDeleteSongId());
+            // Thêm danh sách bài hát
+            List<UUID> songNotFoundIds = new ArrayList<>();
 
             List<SongFavourite> songFavourites = new ArrayList<>();
-            for (UUID ids : addSongToSongFavourite.getAddSongId()) {
+            for (UUID ids : addSongToMyFavourite.getAddSongId()) {
+
+                Song song = new Song();
+                song.setId(ids);
+                song = songRepository.findById(ids).orElse(null);
+                if (song == null) {
+                    songNotFoundIds.add(ids);
+                }
+                //Khởi tạo bài hát ưa thích
                 SongFavourite songFavourite = new SongFavourite();
-                songFavourite.setSong(song);
-
-                User user = new User();
-                user.setId(ids);
-                user = userRepository.findById(ids).orElse(null);
-                if(user == null){
-                    usersNotFound.add(ids);
-                }
-
+                //Thêm danh sách song vào bài hát ưa thích
                 songFavourite.setUser(user);
+                songFavourite.setSong(song);
+                //Thêm danh sách bài hát ưa thích vào listSongFavourite
                 songFavourites.add(songFavourite);
-                if (!usersNotFound.isEmpty()) {
-                    response.setCode(404);
-                    response.setMsg("User not found");
-                    return response;
-                }
-
-                songFavouriteRepository.saveAll(songFavourites);
-                List<Song> songs = songRepository.getSongFavourite(addSongToSongFavourite.getIdSong());
-                for (Song song: songs){
-                    System.out.println(song);
-                }
-                response.setMsg("Success");
-                response.setCode(200);
-                response.setData(songs);
-                return response;
-
             }
+
+            if (!songNotFoundIds.isEmpty()) {
+                response.setCode(404);
+                response.setMsg("Song not found" + songNotFoundIds);
+                return response;
+            }
+            songFavouriteRepository.saveAll(songFavourites);
+            List<Song> songs = songFavouriteRepository.getSongFavourite(addSongToMyFavourite.getIdUser());
+            List<ListSongMyFavouriteResponse> listSongMyFavouriteResponse = new ArrayList<>();
+//            songs.map(songMapper::songToSongResponse);
+            listSongMyFavouriteResponse = songs.stream().map(songMapper::songToListSongMyFavouriteResponse).toList();
+
+            // Vì là lấy danh sách bài hát từ songFavourite
+            for (SongFavourite songFavourite : songFavourites) {
+                System.out.println(songFavourite);
+            }
+            response.setMsg("Success");
+            response.setCode(200);
+            response.setData(listSongMyFavouriteResponse);
+            return response;
         } catch (Exception e) {
-            response.setMsg("Somethings error");
+            response.setMsg("Something error");
             response.setCode(500);
+            e.printStackTrace();
             return response;
         }
     }
+
+//    @Override
+//    public BaseResponse<List<Song>> addSongFavourite(AddSongToSongFavourite addSongToSongFavourite) {
+//        BaseResponse response = new BaseResponse();
+//        try {
+//            Song song = new Song();
+//            song.setId(addSongToSongFavourite.getIdSong());
+//            song = songRepository.findById(addSongToSongFavourite.getIdSong()).orElse(null);
+//            if (song == null) {
+//                response.setCode(404);
+//                response.setMsg("Song not found");
+//                return response;
+//            }
+//
+//            List<UUID> usersNotFound = new ArrayList<>();
+//            songRepository.removeAllSongFavouriteById(addSongToSongFavourite.getDeleteSongId());
+//
+//            List<SongFavourite> songFavourites = new ArrayList<>();
+//            for (UUID ids : addSongToSongFavourite.getAddSongId()) {
+//                SongFavourite songFavourite = new SongFavourite();
+//                songFavourite.setSong(song);
+//
+//                User user = new User();
+//                user.setId(ids);
+//                user = userRepository.findById(ids).orElse(null);
+//                if(user == null){
+//                    usersNotFound.add(ids);
+//                }
+//
+//                songFavourite.setUser(user);
+//                songFavourites.add(songFavourite);
+//                if (!usersNotFound.isEmpty()) {
+//                    response.setCode(404);
+//                    response.setMsg("User not found");
+//                    return response;
+//                }
+//
+//                songFavouriteRepository.saveAll(songFavourites);
+//                List<Song> songs = songRepository.getSongFavourite(addSongToSongFavourite.getIdSong());
+//                for (Song song: songs){
+//                    System.out.println(song);
+//                }
+//                response.setMsg("Success");
+//                response.setCode(200);
+//                response.setData(songs);
+//                return response;
+//
+//            }
+//        } catch (Exception e) {
+//            response.setMsg("Somethings error");
+//            response.setCode(500);
+//            return response;
+//        }
+//    }
 }

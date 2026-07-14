@@ -62,18 +62,5 @@ public interface SongRepository extends JpaRepository<Song, UUID> {
     @Query("delete from PlaylistDetail where song.id in :ids")
     void removeAllSongById(List<UUID> ids);
 
-    @Query("""
-                        select sf.id SongFavouriteId, s.id SongId, s.title songTitle
-                        from Song s
-                        join SongFavourite sf ON s.id = sf.id
-                        where sf.user.id = :idUser
-            """)
-    List<Song> getSongFavourite(@Param("idUser") UUID idUser);
-
-    @Transactional
-    @Modifying
-    @Query("delete from SongFavourite where song.id in :ids")
-    void removeAllSongFavouriteById(List<UUID> ids);
-
 
 }

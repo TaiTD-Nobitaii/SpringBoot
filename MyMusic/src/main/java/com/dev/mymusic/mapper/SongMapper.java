@@ -1,6 +1,7 @@
 package com.dev.mymusic.mapper;
 
 import com.dev.mymusic.dto.request.SongCreateRequest;
+import com.dev.mymusic.dto.response.ListSongMyFavouriteResponse;
 import com.dev.mymusic.dto.response.SongResponse;
 import com.dev.mymusic.entity.Song;
 import org.mapstruct.Mapper;
@@ -19,4 +20,7 @@ public interface SongMapper {
     @Mapping(target = "quantity", ignore = true)
     @Mapping(target = "createAt", ignore = true)
     Song toSong(SongCreateRequest songCreateRequest);
+
+    @Mapping(source = "genre.name", target = "genreName")
+    ListSongMyFavouriteResponse songToListSongMyFavouriteResponse(Song song);
 }

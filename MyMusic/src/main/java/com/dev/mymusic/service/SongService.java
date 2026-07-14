@@ -4,6 +4,7 @@ package com.dev.mymusic.service;
 import com.dev.mymusic.dto.request.*;
 import com.dev.mymusic.dto.response.BaseResponse;
 import com.dev.mymusic.dto.response.BaseResponsePaging;
+import com.dev.mymusic.dto.response.ListSongMyFavouriteResponse;
 import com.dev.mymusic.dto.response.SongResponse;
 import com.dev.mymusic.entity.Song;
 import org.springframework.data.domain.Page;
@@ -29,5 +30,7 @@ public interface SongService {
 
     BaseResponse<List<Song>> addSongMyPlaylist(@RequestBody AddSongToPlayList request);
 
-    BaseResponse<List<Song>> addSongFavourite(@RequestBody AddSongToSongFavourite addSongToSongFavourite);
+//    BaseResponse<List<Song>> addSongFavourite(@RequestBody AddSongToSongFavourite addSongToSongFavourite);
+
+    BaseResponse<List<ListSongMyFavouriteResponse>> addSongToMyFavourite(@RequestBody AddSongToMyFavourite addSongToMyFavourite);
 }
